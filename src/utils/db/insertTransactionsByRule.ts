@@ -1,8 +1,9 @@
 import { createClient } from '@supabase/supabase-js';
 import { createKeywordMap, findKeywordInfo, Rule } from '@/utils/keywordMapFn';
 import { Transaction } from '../file/parseCSV';
+import { Database } from '../../../supabase/types/database.types';
 
-const supabase = createClient(
+const supabase = createClient<Database>(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
   process.env.NEXT_PUBLIC_API_KEY || ''
 );
@@ -23,9 +24,9 @@ async function insertTransactionsByRule(rule: Rule, csv: Transaction[]) {
         {
           date: transaction['거래일시'],
           description: transaction['적요'],
-          deposit: transaction['입금액'],
-          withdrawal: transaction['출금액'],
-          balance: transaction['거래후잔액'],
+          deposit: Number(transaction['입금액']),
+          withdrawal: Number(transaction['출금액']),
+          balance: Number(transaction['거래후잔액']),
           branch: transaction['거래점'],
           company_id,
           category_id,

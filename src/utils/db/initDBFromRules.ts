@@ -1,14 +1,16 @@
 import { createClient } from '@supabase/supabase-js';
+import { Database } from '../../../supabase/types/database.types';
+import { Rule } from '../keywordMapFn';
 
-const supabase = createClient(
+const supabase = createClient<Database>(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
   process.env.NEXT_PUBLIC_API_KEY || ''
 );
 
-async function initDBFromRules(parsedRule: any) {
+async function initDBFromRules(parsedRule: Rule) {
   // rule.json에 정의된 내용을 DB에 삽입
   await Promise.all(
-    parsedRule.companies.map(async (company: any) => {
+    parsedRule.companies.map(async (company) => {
       // 1. companies 저장
       const { error: companyError } = await supabase.from('companies').upsert(
         {
@@ -30,7 +32,7 @@ async function initDBFromRules(parsedRule: any) {
 
       // 2. categories 저장
       await Promise.all(
-        company.categories.map(async (category: any) => {
+        company.categories.map(async (category) => {
           const { error: categoryError } = await supabase
             .from('categories')
             .upsert(
