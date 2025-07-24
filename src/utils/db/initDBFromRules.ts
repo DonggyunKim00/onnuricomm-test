@@ -8,54 +8,42 @@ const supabase = createClient<Database>(
 );
 
 async function initDBFromRules(parsedRule: Rule) {
-  // rule.json에 정의된 내용을 DB에 삽입
-  await Promise.all(
-    parsedRule.companies.map(async (company) => {
-      // 1. companies 저장
-      const { error: companyError } = await supabase.from('companies').upsert(
-        {
-          identity: company.company_id,
-          name: company.company_name,
-        },
-        { onConflict: 'identity' }
-      );
+  // 1. companies 배열 생성
+  const companiesData = parsedRule.companies.map((company) => ({
+    identity: company.company_id,
+    name: company.company_name,
+  }));
 
-      if (companyError) {
-        console.error(
-          `❌ company upsert 실패 (${company.company_name}):`,
-          companyError
-        );
-        return;
-      } else {
-        console.log(`✅ company upsert 성공: ${company.company_name}`);
-      }
-
-      // 2. categories 저장
-      await Promise.all(
-        company.categories.map(async (category) => {
-          const { error: categoryError } = await supabase
-            .from('categories')
-            .upsert(
-              {
-                identity: category.category_id,
-                name: category.category_name,
-                keywords: category.keywords,
-              },
-              { onConflict: 'identity' }
-            );
-
-          if (categoryError) {
-            console.error(
-              `❌ category upsert 실패 (${category.category_name}):`,
-              categoryError
-            );
-          } else {
-            console.log(`✅ category upsert 성공: ${category.category_name}`);
-          }
-        })
-      );
-    })
+  // 2. categories 배열 생성
+  const categoriesData = parsedRule.companies.flatMap((company) =>
+    company.categories.map((category) => ({
+      identity: category.category_id,
+      name: category.category_name,
+      keywords: category.keywords,
+    }))
   );
+
+  // 3. companies bulk upsert
+  const { error: companyError } = await supabase
+    .from('companies')
+    .upsert(companiesData, { onConflict: 'identity' });
+
+  if (companyError) {
+    console.error('❌ companies bulk upsert 실패:', companyError);
+  } else {
+    console.log('✅ companies bulk upsert 성공');
+  }
+
+  // 4. categories bulk upsert
+  const { error: categoryError } = await supabase
+    .from('categories')
+    .upsert(categoriesData, { onConflict: 'identity' });
+
+  if (categoryError) {
+    console.error('❌ categories bulk upsert 실패:', categoryError);
+  } else {
+    console.log('✅ categories bulk upsert 성공');
+  }
 }
 
 export default initDBFromRules;
