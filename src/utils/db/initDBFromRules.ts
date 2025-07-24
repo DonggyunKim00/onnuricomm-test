@@ -1,11 +1,11 @@
 import { createClient } from '@supabase/supabase-js';
 
-async function initDBFromRules(parsedRule: any) {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-    process.env.NEXT_PUBLIC_API_KEY || ''
-  );
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+  process.env.NEXT_PUBLIC_API_KEY || ''
+);
 
+async function initDBFromRules(parsedRule: any) {
   // rule.json에 정의된 내용을 DB에 삽입
   await Promise.all(
     parsedRule.companies.map(async (company: any) => {

@@ -2,11 +2,12 @@ import { createClient } from '@supabase/supabase-js';
 import { createKeywordMap, findKeywordInfo, Rule } from '@/utils/keywordMapFn';
 import { Transaction } from '../file/parseCSV';
 
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+  process.env.NEXT_PUBLIC_API_KEY || ''
+);
+
 async function insertTransactionsByRule(rule: Rule, csv: Transaction[]) {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-    process.env.NEXT_PUBLIC_API_KEY || ''
-  );
   // 각 키워드에 회사와 카테고리가 매핑된 객체 생성
   const keywordMap = createKeywordMap(rule);
 
