@@ -1,63 +1,34 @@
-## 배포 링크
+# 시험 및 테스트 가이드
 
-- (미정)
-
-## 설계 및 보안 아키텍처 기술서
-
-#### A. 시스템 아키텍처
-
-✅ **기술 스택**
-
-- **Language**: TypeScript
-- **Framework**: Next.js
-- **Database**: Supabase (PostgreSQL 기반)
-
-✅ **DB 스키마**
-
-```sql
--- 테이블 설계 sql 작성
-```
-
-#### B. 분류 로직
-
-✅ **동작 방식**
+📌 **로컬 서버 실행**
 
 ```
-동작 방식 설명
-```
-
-✅ **개선 및 확장 아이디어**
-
-```
-규칙이 더 복잡해졌을때 개선 및 확장 아이디어
-```
-
-#### C. 보안 강화 방안
-
-```
-민감한 정보를 서버에 저장하고 안전하게 사용해야 한다면, 어떤 방식으로 시스템을 구축 할것인지 설명
-```
-
-#### D. 문제 상황 대응 전류
-
-```
-즉시 대응 조치, 원인 분석 방법, 재발 방지 대책 측면에서 해결책 제시
-```
-
-## 🚪 시험 및 테스트 가이드
-
-#### 로컬 서버 실행
-
-```bash
 # 의존성 설치
 npm install
 
-# 서버 실행
+# 서버 실행 (http://localhost:3000)
 npm run dev
 ```
 
-#### API 테스트
+📌 **API 테스트**
 
-```
-api 테스트 방법 명시
-```
+- 터미널 API 테스트 방법
+
+  ```bash
+  # 자동 분류 요청 POST API
+
+  curl -X POST http://localhost:3000/api/v1/accounting/process \
+  -F csv=@bank_transactions.csv \
+  -F rule=@rules.json
+  ```
+
+  ```bash
+  # 사업체별 결과 조회 GET API
+  curl "http://localhost:3000/api/v1/accounting/records?companyId=회사id값"
+  ```
+
+- postman API 테스트 방법
+  - 자동 분류 요청 POST API
+    ![postman-POST](/public/postman-post.png)
+  - 사업체별 결과 조회 GET API
+    ![postman-GET](/public/postman-get.png)
