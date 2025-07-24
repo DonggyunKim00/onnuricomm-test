@@ -1,4 +1,4 @@
-type Transaction = {
+export type Transaction = {
   [key: string]: string;
 };
 
